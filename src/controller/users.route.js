@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {generateAuthToken} = require('../security/auth')
+const {verifyToken} = require('../security/auth')
 const bcrypt = require("bcryptjs");
 
 const { body, validationResult } = require('express-validator');
@@ -25,5 +25,24 @@ router.post("/crea", body("email"), body("mdp"), body("pseudo"), async(req,res) 
         }
     }
 });
+
+router.put('/:id', verifyToken, async (req, res) => {
+    const userIdFromToken = req.user.id;
+    const userRole = req.user.droit;
+    const idToUpdate = parseInt(req.params.id);
+
+    // Autoriser si c’est l’utilisateur lui-même ou un admin
+    if (userIdFromToken !== idToUpdate || userRole !== 'admin') {
+        res.status(403).json({ error: "Action non autorisée" });
+    } else {
+        try {
+            await userRepository.updateUser(idToUpdate, req.body);
+            res.status(200).json({ success: "Utilisateur modifié avec succès" });
+        } catch (err) {
+            res.status(500).send(err.message);
+        }
+    }
+});
+
 
 exports.initializeRoutesUsers = () => router;
