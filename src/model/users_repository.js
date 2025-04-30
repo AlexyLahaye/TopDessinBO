@@ -1,16 +1,31 @@
 const UsersRepository = require('../datamodel/users.model');
 const {sequelize} = require("../datamodel/db")
-const bcrypt = require('bcryptjs');
+const {generateHashedPassword} = require("../security/crypto")
 const md5 = require('md5');
 
 const Users = require('../datamodel/users.model');
 const Uti = require('../model/utilitaire');
 
+exports.getUsers = async () => {
+    return await Users.findAll();
+}
+
+exports.getUserByNom = async (pseudo) => { // TODO findOne a revoir plutot en findAll where like ...
+    return await Users.findOne({where : {pseudo}});
+}
+
+exports.getUserByEmail = async (email) => {
+    return await Users.findOne({
+        where : {
+            email : email
+        }
+    });
+}
+
 exports.createUser = async (email, mdp, pseudo) =>{
 
     //génération du mdp crypté
-    const  sel = bcrypt.genSaltSync(12);
-    const mdphash = bcrypt.hashSync(mdp , sel);
+    const mdphash = generateHashedPassword(mdp);
 
     // vérification que mon utilisateur n'existe pas déjà
     const user = await Uti.isUser(email);
@@ -26,13 +41,11 @@ exports.createUser = async (email, mdp, pseudo) =>{
                 console.error('Erreur dans la création du nouvel utilisateur:', error);
             }
         }
-        createUser(email, mdp, pseudo);
+        createUser(email, mdphash, pseudo);
         return true;
-
     }
     else{
         return false;
     }
-
 }
 

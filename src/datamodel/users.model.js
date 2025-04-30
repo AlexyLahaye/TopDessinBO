@@ -20,6 +20,8 @@ const user = sequelize.define(
         acces_tutoriel: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
         banni: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
 
+        role: { type: DataTypes.STRING, allowNull: false, defaultValue: "user" },
+
     },
     { tableName: 'users' },
 );

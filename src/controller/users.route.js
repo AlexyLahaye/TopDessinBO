@@ -24,8 +24,6 @@ router.post("/crea", body("email"), body("mdp"), body("pseudo"), async(req,res) 
             res.status(400).json({ error: "Email déjà utilisé." });
         }
     }
-
-
 });
 
 exports.initializeRoutesUsers = () => router;
