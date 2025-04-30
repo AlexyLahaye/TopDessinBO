@@ -31,10 +31,10 @@ exports.createUser = async (email, mdp, pseudo) =>{
     const user = await Uti.isUser(email);
     if ( user === undefined){
 
-        async function createUser(email, mdp, pseudo) {
+        async function createUser(email, mdphash, pseudo) {
             try {
 
-                const newUser = await UsersRepository.create({ email : email, mdp: mdp ,pseudo: pseudo});
+                const newUser = await UsersRepository.create({ email : email, mdp: mdphash ,pseudo: pseudo});
                 console.log('Nouveau utilisateur crée', newUser);
 
             } catch (error) {

@@ -18,7 +18,7 @@ router.post("/crea", body("email"), body("mdp"), body("pseudo"), async(req,res) 
         console.log(createUser);
 
         if(createUser === true){
-            res.status(200).json({ success: "Utilisateur crée." });
+            res.status(200).json({ success: "Utilisateur créé. Veuillez-vous connecter." });
         }
         else{
             res.status(400).json({ error: "Email déjà utilisé." });
