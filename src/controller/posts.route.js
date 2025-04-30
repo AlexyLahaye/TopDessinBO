@@ -11,4 +11,4 @@ router.post('/upload', upload.single('image'), (req, res) => {
     });
 });
 
-exports.initializeRoutesUsers = () => router;
+exports.initializeRoutesPosts = () => router;

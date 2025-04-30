@@ -4,6 +4,7 @@ const {sequelize} = require("../datamodel/db")
 
 const Users = require('../datamodel/users.model');
 const routesUsers = require('../controller/users.route');
+const routeAuth = require('../controller/auth.route');
 const uploadRoute = require('../controller/posts.route');
 
 
@@ -36,7 +37,8 @@ class WebServer {
 
     _initializeRoutes() {
         this.app.use('/users', routesUsers.initializeRoutesUsers());
-        this.app.use('/upload', uploadRoute.initializeRoutesUsers()); // Route d'upload test
+        this.app.use('/auth', routeAuth.initializeRouteAuth());
+        this.app.use('/upload', uploadRoute.initializeRoutesPosts()); // Route d'upload test
     }
 }
 
