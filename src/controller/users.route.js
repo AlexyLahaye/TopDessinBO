@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 const { body, validationResult } = require('express-validator');
 
 const usersRepository = require('../model/users_repository');
+const reseauxRepository = require('../model/reseaux_repository');
+const Auth = require("../security/auth");
 
 router.post("/crea", body("email"), body("mdp"), body("pseudo"), async(req,res) => {
 
@@ -42,6 +44,19 @@ router.put('/:id', verifyToken, async (req, res) => {
             res.status(500).send(err.message);
         }
     }
+});
+
+
+router.get("/getReseaux/:idUser",  verifyToken, async(req,res) => {
+
+    const idUser = req.params.idUser;
+    const user = req.user;
+
+    const reseaux =  await reseauxRepository.getReseauxByUser(user.id);
+
+
+    res.status(200).json({ success:  reseaux});
+
 });
 
 

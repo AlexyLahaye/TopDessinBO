@@ -3,6 +3,9 @@ const { initializeConfigMiddlewares, initializeErrorMiddlwares } = require('./mi
 const {sequelize} = require("../datamodel/db")
 
 const Users = require('../datamodel/users.model');
+const Reseaux = require('../datamodel/reseaux.model');
+
+
 const routesUsers = require('../controller/users.route');
 const routeAuth = require('../controller/auth.route');
 const uploadRoute = require('../controller/posts.route');
@@ -17,6 +20,10 @@ class WebServer {
     constructor() {
         this.app = express();
         sequelize.sync({alter: true});
+
+
+        Reseaux.belongsTo(Users, { foreignKey: 'id' });
+        Users.hasOne(Reseaux, { foreignKey: 'id' });
 
 
         require('dotenv').config();
