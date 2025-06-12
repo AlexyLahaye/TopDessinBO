@@ -1,6 +1,4 @@
-const { sign } = require('jsonwebtoken');
-
-const jwt = require('jsonwebtoken');
+const { sign, verify } = require('jsonwebtoken');
 
 exports.generateAuthToken = (id, pseudo, droit) => {
 
@@ -32,7 +30,7 @@ exports.verifyToken = (req, res, next) => {
         return res.status(500).json({ error: "Configuration serveur manquante (SECRET_KEY)" });
     }
 
-    jwt.verify(token, SECRET_KEY, (err, user) => {
+    verify(token, SECRET_KEY, (err, user) => {
         if (err) {
             console.log("❌ Erreur de vérification JWT :", err.message);
             return res.status(403).json({ error: "Token invalide ou expiré" });

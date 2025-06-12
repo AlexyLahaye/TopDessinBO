@@ -1,4 +1,3 @@
-const UsersRepository = require('../datamodel/users.model');
 const {sequelize} = require("../datamodel/db")
 const {generateHashedPassword} = require("../security/crypto")
 const md5 = require('md5');
@@ -12,6 +11,10 @@ exports.getUsers = async () => {
 
 exports.getUserByNom = async (pseudo) => { // TODO findOne a revoir plutot en findAll where like ...
     return await Users.findOne({where : {pseudo}});
+}
+
+exports.getUserById = async (id) => {
+    return await Users.findByPk(id);
 }
 
 exports.getUserByEmail = async (email) => {
@@ -34,7 +37,7 @@ exports.createUser = async (email, mdp, pseudo) =>{
         async function createUser(email, mdphash, pseudo) {
             try {
 
-                const newUser = await UsersRepository.create({ email : email, mdp: mdphash ,pseudo: pseudo});
+                const newUser = await Users.create({ email : email, mdp: mdphash ,pseudo: pseudo});
                 console.log('Nouveau utilisateur crée', newUser);
 
             } catch (error) {
@@ -48,4 +51,42 @@ exports.createUser = async (email, mdp, pseudo) =>{
         return false;
     }
 }
+
+exports.updateUser = async (id, updateData) => {
+    try {
+        const existingUser = await Users.findByPk(id); // ou getUserById si tu préfères
+
+        if (!existingUser) {
+            console.log("Utilisateur non trouvé");
+            return false;
+        }
+
+        const updatedFields = {};
+
+        // Champs modifiables
+        if (updateData.email) updatedFields.email = updateData.email;
+        if (updateData.mdp) updatedFields.mdp = generateHashedPassword(updateData.mdp);
+        if (updateData.pseudo) updatedFields.pseudo = updateData.pseudo;
+        if (updateData.description) updatedFields.description = updateData.description;
+        if (updateData.icone) updatedFields.icone = updateData.icone;
+
+        if (Object.keys(updatedFields).length === 0) {
+            console.log("Aucune donnée à mettre à jour.");
+            return false;
+        }
+
+        await Users.update(updatedFields, {
+            where: { id: id }
+        });
+
+        console.log("Champs modifiés :", updatedFields);
+        return updatedFields; // Renvoie uniquement ce qui a été modifié
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
+        return false;
+    }
+};
+
+
 
