@@ -47,13 +47,9 @@ router.put('/:id', verifyToken, async (req, res) => {
 });
 
 
-router.get("/getReseaux",  verifyToken, async(req,res) => {
+router.get("/getReseaux/:id",  verifyToken, async(req,res) => {
 
-    const idUser = req.params.idUser;
-    const user = req.user;
-
-    const reseaux =  await reseauxRepository.getReseauxByUser(user.id);
-
+    const reseaux =  await reseauxRepository.getReseauxByUser(req.params.id);
 
     res.status(200).json({ success:  reseaux});
 
