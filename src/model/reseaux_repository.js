@@ -12,7 +12,7 @@ exports.getReseauxByUser = async ( userId) => {
 
     return await Reseaux.findOne({
         where : {userId},
-        attributes: ['instagram', 'twitter', 'discord', 'twitch', 'etsy' ],
+        attributes: ['instagram', 'twitter', 'discord', 'twitch', 'tiktok', 'etsy' ],
     });
 }
 
