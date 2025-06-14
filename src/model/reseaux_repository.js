@@ -9,11 +9,39 @@ const Auth = require('../security/auth');
 
 exports.getReseauxByUser = async ( userId) => {
 
-
     return await Reseaux.findOne({
         where : {userId},
         attributes: ['instagram', 'twitter', 'discord', 'twitch', 'tiktok', 'etsy' ],
     });
 }
+
+exports.updateReseauxByUser = async (userId, instagram, twitter, discord, twitch, tiktok, etsy) => {
+    try {
+        const [nbUpdated] = await Reseaux.update(
+            {
+                instagram: instagram,
+                twitter: twitter,
+                discord: discord,
+                twitch: twitch,
+                tiktok: tiktok,
+                etsy: etsy,
+            },
+            {
+                where: { userId }
+            }
+        );
+
+        if (nbUpdated === 0) {
+            Console.log("MAJ reseaux sociaux echoué ! Aucune ligne mise à jour (utilisateur non trouvé ?)")
+            return false;
+        }
+        return true;
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour des réseaux :", error);
+        return false;
+    }
+};
+
 
 

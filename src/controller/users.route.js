@@ -17,7 +17,6 @@ router.post("/crea", body("email"), body("mdp"), body("pseudo"), async(req,res) 
     }
     else{
         const createUser =  await usersRepository.createUser(req.body.email, req.body.mdp, req.body.pseudo);
-        console.log(createUser);
 
         if(createUser === true){
             res.status(200).json({ success: "Utilisateur créé. Veuillez-vous connecter." });
@@ -54,6 +53,27 @@ router.get("/getReseaux/:id",  verifyToken, async(req,res) => {
     res.status(200).json({ success:  reseaux});
 
 });
+
+router.post("/modifReseaux",
+    body("userId"),
+    body("instagram"), body("twitter"),
+    body("discord"), body("twitch"),
+    body("tiktok"), body("etsy"),
+    verifyToken, async(req,res) => {
+
+    const modifReseaux =  await reseauxRepository.updateReseauxByUser(req.body.userId, req.body.instagram, req.body.twitter, req.body.discord, req.body.twitch, req.body.tiktok, req.body.etsy);
+
+    if(modifReseaux === true){
+        res.status(200).json({ success: "Mise à jour des informations." });
+    }
+    else{
+        res.status(400).json({ error: "Un problème a empéché la mise à jour des informations veuillez réessayer." });
+    }
+
+});
+
+
+
 
 
 exports.initializeRoutesUsers = () => router;
