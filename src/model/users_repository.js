@@ -94,5 +94,40 @@ exports.updateUser = async (id, updateData) => {
     }
 };
 
+exports.updateMailUser = async (email, idUser) =>{
+
+
+    // vérification que un utilisateur n'est pas déjà mon mail
+    const user = await Uti.isUser(email);
+
+    if ( user === undefined || user.id === idUser){
+        async function modifUser(email, idUser) {
+            try {
+
+                const modifUser = await Users.update(
+                    { email: email },
+                    { where: { id: idUser } }
+                );
+
+
+            } catch (error) {
+                console.error('Erreur dans la modification du mail', error);
+            }
+        }
+        modifUser(email, idUser);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+exports.getMailUser = async (id) =>{
+    return await Users.findByPk(id, {
+        attributes: ['email']
+    });
+}
+
+
 
 

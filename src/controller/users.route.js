@@ -80,7 +80,7 @@ router.post("/modifReseaux",
 
 });
 
-router.get("/info/:id", async (req, res) => {
+router.get("/info/:id", verifyToken, async (req, res) => {
     try {
         const id = req.params.id;
 
@@ -93,6 +93,40 @@ router.get("/info/:id", async (req, res) => {
         res.status(200).json({ success: infoUser });
     } catch (error) {
         console.error("Erreur lors de la récupération des infos utilisateur:", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+
+router.post("/modifMail",
+    body("id"),
+    body("mail"),
+    verifyToken, async(req,res) => {
+
+        const modifMail =  await usersRepository.updateMailUser( req.body.mail , req.body.id);
+
+        if(modifMail === true){
+            res.status(200).json({ success: "Mise à jour de l'adresse  mail." });
+        }
+        else{
+            res.status(400).json({ error: "Un utilisateur utilise déjà cette adresse mail." });
+        }
+
+    });
+
+router.get("/mail/:id", verifyToken, async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const infoUser = await usersRepository.getMailUser(id);
+
+        if (!infoUser) {
+            return res.status(404).json({ error: "Mail non trouvé" });
+        }
+
+        res.status(200).json({ success: infoUser });
+    } catch (error) {
+        console.error("Erreur lors de la récupération du mail utilisateur:", error);
         res.status(500).json({ error: "Erreur serveur" });
     }
 });
