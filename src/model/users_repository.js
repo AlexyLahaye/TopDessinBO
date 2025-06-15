@@ -25,6 +25,12 @@ exports.getUserByEmail = async (email) => {
     });
 }
 
+exports.getInfoUserNS = async (id) => {
+    return await Users.findByPk(id, {
+        attributes: ['pseudo', 'description', 'icone', 'banner']
+    });
+};
+
 exports.createUser = async (email, mdp, pseudo) =>{
 
     //génération du mdp crypté

@@ -80,7 +80,22 @@ router.post("/modifReseaux",
 
 });
 
+router.get("/info/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
 
+        const infoUser = await usersRepository.getInfoUserNS(id);
+
+        if (!infoUser) {
+            return res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
+
+        res.status(200).json({ success: infoUser });
+    } catch (error) {
+        console.error("Erreur lors de la récupération des infos utilisateur:", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
 
 
 

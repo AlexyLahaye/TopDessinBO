@@ -10,6 +10,8 @@ const user = sequelize.define(
         pseudo: { type: DataTypes.STRING(14), allowNull: false },
         description: { type: DataTypes.STRING(110), allowNull: true },
         icone: { type: DataTypes.STRING, allowNull: true },
+        banner: { type: DataTypes.STRING, allowNull: true },
+
 
         art_coin: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 100 },
 
