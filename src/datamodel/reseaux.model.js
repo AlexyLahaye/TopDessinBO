@@ -9,6 +9,7 @@ const reseaux = sequelize.define(
         twitter: { type: DataTypes.STRING, allowNull: true },
         discord: { type: DataTypes.STRING, allowNull: true },
         twitch: { type: DataTypes.STRING, allowNull: true },
+        tiktok: { type: DataTypes.STRING, allowNull: true },
         etsy: { type: DataTypes.STRING, allowNull: true },
         userId: {
             type: DataTypes.INTEGER,
