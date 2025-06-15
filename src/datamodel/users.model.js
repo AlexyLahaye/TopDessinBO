@@ -9,6 +9,7 @@ const user = sequelize.define(
         mdp: { type: DataTypes.STRING, allowNull: false },
         pseudo: { type: DataTypes.STRING(14), allowNull: false },
         description: { type: DataTypes.STRING(110), allowNull: true },
+        icone: { type: DataTypes.STRING, allowNull: true },
 
         art_coin: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 100 },
 

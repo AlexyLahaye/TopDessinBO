@@ -27,21 +27,29 @@ router.post("/crea", body("email"), body("mdp"), body("pseudo"), async(req,res) 
     }
 });
 
-router.put('/:id', verifyToken, async (req, res) => {
-    const userIdFromToken = req.user.id;
-    const userRole = req.user.droit;
+// Mets a jour l'utilisateur. (PATCH permet une modicifation partielle ou complete.
+router.patch('/:id', verifyToken, async (req, res) => {
     const idToUpdate = parseInt(req.params.id);
 
-    // Autoriser si c’est l’utilisateur lui-même ou un admin
-    if (userIdFromToken !== idToUpdate || userRole !== 'admin') {
-        res.status(403).json({ error: "Action non autorisée" });
-    } else {
-        try {
-            await userRepository.updateUser(idToUpdate, req.body);
-            res.status(200).json({ success: "Utilisateur modifié avec succès" });
-        } catch (err) {
-            res.status(500).send(err.message);
+    // Autorisation ?
+    const isSelf = req.user.id === idToUpdate;
+    const isAdmin = req.user.droit === 'admin';
+
+    if (!isSelf && !isAdmin) {
+        return res.status(403).json({ error: "Action non autorisée" });
+    }
+
+    try {
+        const result= await usersRepository.updateUser(idToUpdate, req.body);
+
+        if (!result) {
+            return res.status(404).json({ error: "Utilisateur non trouvé ou aucune donnée à mettre à jour" });
         }
+
+        res.status(200).json({ modifications: result });
+
+    } catch (err) {
+        res.status(500).json({ error: "Erreur serveur : " + err.message });
     }
 });
 
