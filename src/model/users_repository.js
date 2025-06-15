@@ -128,6 +128,36 @@ exports.getMailUser = async (id) =>{
     });
 }
 
+exports.updateMdpUser = async (mdp, idUser) =>{
+
+    //génération du mdp crypté
+    const mdphash = generateHashedPassword(mdp);
+
+    if(mdphash.trim().length < 8){
+
+        return [false, "Le mot de passe doit contenir au minimum 8 caractères."];
+    }
+    else{
+        async function modifUser(mdp, idUser) {
+            try {
+
+                const modifUser = await Users.update(
+                    { mdp: mdp },
+                    { where: { id: idUser } }
+                );
+
+
+            } catch (error) {
+                console.error('Erreur dans la modification du mail', error);
+            }
+        }
+        modifUser(mdphash, idUser);
+        return [true, "Modification du mot de passe enregistrée."];
+    }
+
+}
+
+
 
 
 

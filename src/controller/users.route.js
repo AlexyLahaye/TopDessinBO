@@ -112,7 +112,7 @@ router.post("/modifMail",
             res.status(400).json({ error: "Un utilisateur utilise déjà cette adresse mail." });
         }
 
-    });
+});
 
 router.get("/mail/:id", verifyToken, async (req, res) => {
     try {
@@ -129,6 +129,22 @@ router.get("/mail/:id", verifyToken, async (req, res) => {
         console.error("Erreur lors de la récupération du mail utilisateur:", error);
         res.status(500).json({ error: "Erreur serveur" });
     }
+});
+
+router.post("/modifMdp",
+    body("id"),
+    body("mdp"),
+    verifyToken, async(req,res) => {
+
+        const [status, response] =  await usersRepository.updateMdpUser( req.body.mdp , req.body.id);
+
+        if(status === true){
+            res.status(200).json({ success: response });
+        }
+        else{
+            res.status(400).json({ error: response});
+        }
+
 });
 
 
