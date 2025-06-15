@@ -13,7 +13,7 @@ router.post('/login', body('email').notEmpty(), body('mdp').notEmpty(), async (r
     const user = await usersRepository.getUserByEmail(email);
 
     if (!user || !passwordsAreEqual(mdp, user.mdp)) {
-        res.status(400).json({error:"L'utilisateur n'existe pas ou le mot de passe ne correspond pas à celui inscrit lors de l'inscription. "});
+        res.status(400).json({error:"L'utilisateur n'existe pas ou le mot de passe est incorrect. "});
     } else {
 
 

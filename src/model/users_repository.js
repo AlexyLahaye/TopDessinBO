@@ -157,6 +157,27 @@ exports.updateMdpUser = async (mdp, idUser) =>{
 
 }
 
+exports.deleteUser = async (idUser) =>{
+
+        async function suppUser( idUser) {
+            try {
+
+                await Users.destroy({
+                    where: { id: idUser }
+                });
+            } catch (error) {
+                return [false, "Erreur dans la suppression du compte."];
+            }
+        }
+
+        suppUser( idUser);
+        return [true, "Supression utilisateur réussite."];
+
+
+}
+
+
+
 
 
 

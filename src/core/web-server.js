@@ -22,9 +22,24 @@ class WebServer {
         sequelize.sync({alter: true});
 
 
-        Reseaux.belongsTo(Users, { foreignKey: 'id' });
-        Users.hasOne(Reseaux, { foreignKey: 'id' });
+        // Reseaux.belongsTo(Users, { foreignKey: 'id' });
+        // Users.hasOne(Reseaux, { foreignKey: 'id' });
 
+        // Dans le modèle Reseaux
+        Reseaux.belongsTo(Users, {
+            foreignKey: 'userId',
+            onDelete: 'CASCADE',
+        });
+
+        // Dans le modèle Users
+        Users.hasOne(Reseaux, {
+            foreignKey: 'userId',
+            onDelete: 'CASCADE',
+        });
+
+
+        // ⚠️ Supprime toutes les tables existantes puis les recrée
+        // sequelize.sync({ force: true }); // ou { alter: true } pour mise à jour
 
         require('dotenv').config();
         initializeConfigMiddlewares(this.app);
