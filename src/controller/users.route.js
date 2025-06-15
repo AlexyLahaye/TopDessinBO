@@ -148,5 +148,21 @@ router.post("/modifMdp",
 });
 
 
+router.post("/suppUser",
+    body("id"),
+    verifyToken, async(req,res) => {
+
+        const [status, response] =  await usersRepository.deleteUser(req.body.id);
+
+        if(status === true){
+            res.status(200).json({ success: response });
+        }
+        else{
+            res.status(400).json({ error: response});
+        }
+
+    });
+
+
 
 exports.initializeRoutesUsers = () => router;
