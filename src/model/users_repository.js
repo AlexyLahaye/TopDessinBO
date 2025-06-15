@@ -94,5 +94,70 @@ exports.updateUser = async (id, updateData) => {
     }
 };
 
+exports.updateMailUser = async (email, idUser) =>{
+
+
+    // vérification que un utilisateur n'est pas déjà mon mail
+    const user = await Uti.isUser(email);
+
+    if ( user === undefined || user.id === idUser){
+        async function modifUser(email, idUser) {
+            try {
+
+                const modifUser = await Users.update(
+                    { email: email },
+                    { where: { id: idUser } }
+                );
+
+
+            } catch (error) {
+                console.error('Erreur dans la modification du mail', error);
+            }
+        }
+        modifUser(email, idUser);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+exports.getMailUser = async (id) =>{
+    return await Users.findByPk(id, {
+        attributes: ['email']
+    });
+}
+
+exports.updateMdpUser = async (mdp, idUser) =>{
+
+    //génération du mdp crypté
+    const mdphash = generateHashedPassword(mdp);
+
+    if(mdphash.trim().length < 8){
+
+        return [false, "Le mot de passe doit contenir au minimum 8 caractères."];
+    }
+    else{
+        async function modifUser(mdp, idUser) {
+            try {
+
+                const modifUser = await Users.update(
+                    { mdp: mdp },
+                    { where: { id: idUser } }
+                );
+
+
+            } catch (error) {
+                console.error('Erreur dans la modification du mail', error);
+            }
+        }
+        modifUser(mdphash, idUser);
+        return [true, "Modification du mot de passe enregistrée."];
+    }
+
+}
+
+
+
 
 
