@@ -22,7 +22,6 @@ router.post("/ajoutAmi", body("id"), body("idAmi"), verifyToken, async(req,res) 
 router.get("/isFriend/:id/:idAmi", verifyToken, async(req,res) => {
 
         const isFriend =  await followsRepository.isFriend(req.params.id, req.params.idAmi);
-        console.log(isFriend)
 
         if(isFriend ){
             res.status(200).json({ success: true });
@@ -32,6 +31,21 @@ router.get("/isFriend/:id/:idAmi", verifyToken, async(req,res) => {
         }
 
 });
+
+
+router.get("/amis/:id", verifyToken, async(req,res) => {
+
+    const friends =  await followsRepository.getFriends(req.params.id);
+
+    if(friends ){
+        res.status(200).json({ success: friends });
+    }
+    else{
+        res.status(400).json({ success: false });
+    }
+
+});
+
 
 router.post("/suppAmi", body("id"), body("idAmi"), verifyToken, async(req,res) => {
 

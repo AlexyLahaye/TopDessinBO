@@ -9,9 +9,6 @@ const Users = require("../datamodel/users.model");
 
 
 exports.followFriends = async ( userId, idAmi) => {
-
-
-
     async function addFriend(userId, idAmi) {
         try {
 
@@ -62,3 +59,30 @@ exports.DeleteFriends = async ( userId, idAmi) => {
     return true;
 
 }
+
+exports.getFriends = async (userId) => {
+    async function fetchFriends(userId) {
+        try {
+
+            const friends = await sequelize.query(
+                `SELECT pseudo, users."id" , icone
+                    FROM "follows", "users"
+                    where follows."idAmis" = "users"."id"
+                    and "follows"."userId" = :userId;`,
+                {
+                    replacements: {  userId }
+                }
+            )
+                .then(([results, metadata]) => {
+                    return results;
+                });
+            return friends;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des amis :", error);
+            return null;
+        }
+    }
+
+    return await fetchFriends(userId);
+};
