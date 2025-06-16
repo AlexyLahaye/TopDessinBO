@@ -10,6 +10,8 @@ const Users = require("../datamodel/users.model");
 
 exports.followFriends = async ( userId, idAmi) => {
 
+
+
     async function addFriend(userId, idAmi) {
         try {
 
@@ -25,6 +27,7 @@ exports.followFriends = async ( userId, idAmi) => {
     }
     addFriend(userId, idAmi);
     return true;
+
 
 }
 

@@ -1,22 +1,34 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('./db');
 
+
 const followsModel = sequelize.define(
     'follows',
     {
-        id: { primaryKey: true, autoIncrement: true , type: DataTypes.INTEGER},
-        idAmis: { type: DataTypes.INTEGER, allowNull: false },
         userId: {
             type: DataTypes.INTEGER,
+            allowNull: false,
+            primaryKey: true,
             references: {
                 model: 'users',
                 key: 'id',
             },
-            onDelete: 'CASCADE', // facultatif, mais utile pour gérer les suppressions
+            onDelete: 'CASCADE',
+        },
+        idAmis: {
+            type: DataTypes.INTEGER,
             allowNull: false,
+            primaryKey: true,
+            references: {
+                model: 'users', // même table
+                key: 'id',
+            },
+            onDelete: 'CASCADE',
         }
-
     },
-    { tableName: 'follows' },
+    {
+        tableName: 'follows',
+        timestamps: false, // désactive createdAt/updatedAt si inutile
+    }
 );
 module.exports = followsModel;

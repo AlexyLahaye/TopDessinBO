@@ -37,14 +37,20 @@ class WebServer {
             });
 
         // Lien follows/utilisateur
-            // Dans le modèle follows
-             Follows.belongsTo(Users, {
+            Users.belongsToMany(Users, {
+                through: Follows,
+                as: 'amis', // alias : les personnes suivies
                 foreignKey: 'userId',
+                otherKey: 'idAmis',
                 onDelete: 'CASCADE',
             });
-            // Dans le modèle Users
-            Users.hasOne(Follows, {
-                foreignKey: 'userId',
+
+            // Un utilisateur est suivi par plusieurs autres (idAmis → les gens qui le suivent)
+            Users.belongsToMany(Users, {
+                through: Follows,
+                as: 'followers', // alias : les personnes qui le suivent
+                foreignKey: 'idAmis',
+                otherKey: 'userId',
                 onDelete: 'CASCADE',
             });
 
