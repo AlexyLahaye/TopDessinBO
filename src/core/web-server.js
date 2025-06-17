@@ -5,6 +5,11 @@ const {sequelize} = require("../datamodel/db")
 const Users = require('../datamodel/users.model');
 const Reseaux = require('../datamodel/reseaux.model');
 const Follows = require('../datamodel/follows.model');
+const Themes = require('../datamodel/themes.model');
+const Posts = require('../datamodel/posts.model');
+const Commentaires = require('../datamodel/commentaires.model');
+const Raisons = require('../datamodel/raisons.model');
+const Signalement_post = require('../datamodel/signalements_post');
 
 
 const routesUsers = require('../controller/users.route');
@@ -21,10 +26,8 @@ class WebServer {
 
     constructor() {
         this.app = express();
-        sequelize.sync({alter: true});
 
-
-        // Lien Réseaux/utilisateur
+        //Reseaux
             // Dans le modèle Reseaux
             Reseaux.belongsTo(Users, {
                 foreignKey: 'userId',
@@ -36,7 +39,67 @@ class WebServer {
                 onDelete: 'CASCADE',
             });
 
-        // Lien follows/utilisateur
+
+        // Posts
+            Users.hasMany(Posts, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+
+            Posts.belongsTo(Users, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+
+        // Signalement_Post
+            Posts.hasMany(Signalement_post, {
+                foreignKey: 'postId',
+                onDelete: 'CASCADE',
+            });
+            Users.hasMany(Signalement_post, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+            Raisons.hasMany(Signalement_post, {
+                foreignKey: 'raisonId',
+                onDelete: 'CASCADE',
+            });
+
+            Signalement_post.belongsTo(Posts, {
+                foreignKey: 'postId',
+                onDelete: 'CASCADE',
+            });
+            Signalement_post.belongsTo(Users, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+            Signalement_post.belongsTo(Raisons, {
+                foreignKey: 'raisonId',
+                onDelete: 'CASCADE',
+            });
+
+
+        // Commentaires
+            Users.hasMany(Commentaires, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+            Posts.hasMany(Commentaires, {
+                foreignKey: 'postId',
+                onDelete: 'CASCADE',
+            });
+
+            Commentaires.belongsTo(Users, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+            Commentaires.belongsTo(Posts, {
+                foreignKey: 'postId',
+                onDelete: 'CASCADE',
+            });
+
+
+        // Follows
             Users.belongsToMany(Users, {
                 through: Follows,
                 as: 'amis', // alias : les personnes suivies
@@ -55,8 +118,21 @@ class WebServer {
             });
 
 
+        // THEMESxPOSTS
+            Posts.belongsToMany(Themes, {
+                through: 'post_themes',
+                foreignKey: 'postId',
+                otherKey: 'themeId',
+            });
+            Themes.belongsToMany(Posts, {
+                through: 'post_themes',
+                foreignKey: 'themeId',
+                otherKey: 'postId',
+            });
+
+
         // ⚠️ Supprime toutes les tables existantes puis les recrée
-        // sequelize.sync({ force: true }); // ou { alter: true } pour mise à jour
+         sequelize.sync({ alter: true }); // pour mise à jour
 
         require('dotenv').config();
         initializeConfigMiddlewares(this.app);
