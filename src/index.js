@@ -1,3 +1,4 @@
+require('dotenv').config();
 const WebServer = require('./core/web-server');
 const {sequelize} = require("./datamodel/db");
 

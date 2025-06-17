@@ -1,19 +1,18 @@
 require('dotenv').config();
 const { Sequelize } = require('sequelize');
 
-var dsn = process.env.DB_HOST
-if (dsn === undefined) {
-    const { env } = process;
-    const read_base64_json = function(varName) {
-        try {
-            return JSON.parse(Buffer.from(env[varName], "base64").toString())
-        }
-        catch (err) {
-            throw new Error(`no ${varName} environment variable`)
-        } };
-    const variables = read_base64_json('PLATFORM_VARIABLES')
-    dsn = variables["CONNECTION_STRING"]
-}
-exports.sequelize= new  Sequelize(dsn) // Example for postgres
-//exports.sequelize= new  Sequelize(process.env.DB_HOST) // Example for postgres
+// Construction propre de l'instance Sequelize sans URL
+const sequelize = new Sequelize(
+    process.env.DB_NAME,     // topdessin
+    process.env.DB_USER,     // admin
+    process.env.DB_MDP,      // ton mot de passe
+    {
+        host: process.env.DB_HOST, // localhost
+        port: process.env.DB_PORT, // 5432
+        dialect: 'postgres',
+        logging: false, // désactive les logs SQL (tu peux le mettre à true pour debug)
+    }
+);
 
+// Export de l'instance pour l'utiliser ailleurs dans l'API
+module.exports = { sequelize };
