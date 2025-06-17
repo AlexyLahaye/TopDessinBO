@@ -10,6 +10,8 @@ const Posts = require('../datamodel/posts.model');
 const Commentaires = require('../datamodel/commentaires.model');
 const Raisons = require('../datamodel/raisons.model');
 const Signalement_post = require('../datamodel/signalements_post');
+const Signalement_com = require('../datamodel/signalements_com');
+const Reclamations = require('../datamodel/reclamations.model');
 
 
 const routesUsers = require('../controller/users.route');
@@ -77,6 +79,54 @@ class WebServer {
                 foreignKey: 'raisonId',
                 onDelete: 'CASCADE',
             });
+
+
+        //Réclamation
+            Signalement_post.hasMany(Reclamations, {
+                foreignKey: 'signalementId',
+                onDelete: 'CASCADE',
+            });
+            Users.hasMany(Reclamations, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+
+            Reclamations.belongsTo(Signalement_post, {
+                foreignKey: 'signalementId',
+                onDelete: 'CASCADE',
+            });
+            Reclamations.belongsTo(Users, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+
+        // Signalement_Com
+            Commentaires.hasMany(Signalement_com, {
+                foreignKey: 'comId',
+                onDelete: 'CASCADE',
+            });
+            Users.hasMany(Signalement_com, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+            Raisons.hasMany(Signalement_post, {
+                foreignKey: 'raisonId',
+                onDelete: 'CASCADE',
+            });
+
+            Signalement_com.belongsTo(Commentaires, {
+                foreignKey: 'comId',
+                onDelete: 'CASCADE',
+            });
+            Signalement_com.belongsTo(Users, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+            Signalement_com.belongsTo(Raisons, {
+                foreignKey: 'raisonId',
+                onDelete: 'CASCADE',
+            });
+
 
 
         // Commentaires
