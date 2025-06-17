@@ -14,6 +14,7 @@ const postsModel = sequelize.define(
         categorie: { type: DataTypes.STRING, allowNull: true },
         nb_like: { type: DataTypes.INTEGER, allowNull: true },
         etat: { type: DataTypes.STRING, allowNull: true },
+        hashtags: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true },
         userId: {
             type: DataTypes.INTEGER,
             references: {
