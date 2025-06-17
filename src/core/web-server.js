@@ -141,8 +141,8 @@ class WebServer {
     }
 
     start() {
-        this.server = this.app.listen(this.port, () => {
-            console.log(`Example app listening on port ${this.port}`);
+        this.server = this.app.listen(this.port, '0.0.0.0', () => {
+            console.log(`Example app listening on port ${this.port} (accessible par ngrok)`);
         });
     }
 
