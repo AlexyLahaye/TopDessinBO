@@ -18,6 +18,7 @@ const routesUsers = require('../controller/users.route');
 const routeAuth = require('../controller/auth.route');
 const uploadRoute = require('../controller/posts.route');
 const routeFollows = require('../controller/follows.route');
+const routeSignalement = require('../controller/signalement.route');
 
 
 class WebServer {
@@ -204,6 +205,7 @@ class WebServer {
         this.app.use('/users', routesUsers.initializeRoutesUsers());
         this.app.use('/auth', routeAuth.initializeRouteAuth());
         this.app.use('/follow', routeFollows.initializeRouteFollows());
+        this.app.use('/repport', routeSignalement.initializeRoutesSignalement());
         this.app.use('/upload', uploadRoute.initializeRoutesPosts()); // Route d'upload test
     }
 }
