@@ -45,6 +45,7 @@ router.post("/signalPost",
 
     });
 
+
 router.get("/getSignalPost/:postId",
     verifyToken, async(req,res) => {
 
@@ -60,11 +61,11 @@ router.get("/getSignalPost/:postId",
 
     });
 
-router.get("/getReclamation",
+router.get("/getReclamation/:userId",
     verifyToken, async(req,res) => {
 
         console.log(req.params.postId)
-        const [status, response] =  await signalementRepository.GetReclamationsOuvertes( req.params.postId)
+        const [status, response] =  await signalementRepository.GetReclamationsOuvertes(req.params.userId)
 
         if(status === true){
             res.status(200).json({ success: response });
@@ -100,7 +101,7 @@ router.post("/creaReclamation",
 );
 
 
-router.get("/getReclamation/:postId", verifyToken, async (req, res) => {
+router.get("/getReclamationPost/:postId", verifyToken, async (req, res) => {
     const postId = req.params.postId;
 
     const [status, response] = await signalementRepository.getReclamationsByPostId(postId);

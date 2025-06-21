@@ -6,6 +6,8 @@ const users = require('../datamodel/users.model');
 const Raison = require('../datamodel/raisons.model');
 const Reclamation = require('../datamodel/reclamations.model');
 
+const { Op, Sequelize } = require('sequelize');
+
 exports.reportCom = async (userId, comId, raisonId, description) => {
     try {
         // Vérifie si l'utilisateur a déjà signalé ce commentaire
@@ -166,23 +168,52 @@ exports.GetSignalementPost = async (postId) => {
     }
 };
 
-exports.GetReclamationsOuvertes = async () => {
+exports.GetReclamationsOuvertes = async (excludedUserId) => {
     try {
-        const reclamations = await Reclamation.findAll({
-            where: { statut: 'OUVERT' },  // filtre sur le type ouvert
+        // Étape 1 : Récupérer les postId à exclure
+        const excludedPostIdsSubquery = Sequelize.literal(`(
+            SELECT "postId" FROM "reclamations" 
+            WHERE "userId" = ${excludedUserId} AND "type" = 0
+        )`);
+
+        // Étape 2 : Récupérer UNE réclamation par post ouvert non exclu (la plus récente ici)
+        const allReclamations = await Reclamation.findAll({
+            where: {
+                statut: 'OUVERT',
+                postId: { [Op.notIn]: excludedPostIdsSubquery }
+            },
             include: [
-                {
-                    model: users,
-                    attributes: ['id', 'pseudo'],
-                },
-                {
-                    model: SignalementPost,
-                    attributes: ['id', 'description', 'postId'],
-                }
+                { model: users, attributes: ['id', 'pseudo'] },
+                { model: Post, attributes: ['id'] }
             ],
+            order: [['createdAt', 'DESC']] // pour prendre la plus récente si on filtre ensuite
         });
 
-        return [true, reclamations];
+        // Étape 3 : filtrer pour ne garder qu'une seule réclamation par postId
+        const seenPosts = new Set();
+        const uniqueReclamations = [];
+
+        for (const rec of allReclamations) {
+            if (!seenPosts.has(rec.postId)) {
+                seenPosts.add(rec.postId);
+                uniqueReclamations.push(rec);
+            }
+        }
+
+        // Étape 4 : calculer combien de réclamations existent par postId
+        const countByPostId = {};
+        allReclamations.forEach(rec => {
+            countByPostId[rec.postId] = (countByPostId[rec.postId] || 0) + 1;
+        });
+
+        // Étape 5 : ajouter le champ "etat"
+        const reclamationsAvecEtat = uniqueReclamations.map(r => ({
+            ...r.toJSON(),
+            etat: countByPostId[r.postId] > 1 ? "retour" : "Réclamation"
+        }));
+
+        return [true, reclamationsAvecEtat];
+
     } catch (error) {
         console.error('Erreur lors de la récupération des réclamations ouvertes :', error);
         return [false, "Erreur lors de la récupération des réclamations ouvertes"];
