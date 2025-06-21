@@ -83,19 +83,21 @@ class WebServer {
 
 
         //Réclamation
-            Signalement_post.hasMany(Reclamations, {
-                foreignKey: 'signalementId',
+            Posts.hasMany(Reclamations, {
+                foreignKey: 'postId',
                 onDelete: 'CASCADE',
             });
+
             Users.hasMany(Reclamations, {
                 foreignKey: 'userId',
                 onDelete: 'CASCADE',
             });
 
-            Reclamations.belongsTo(Signalement_post, {
-                foreignKey: 'signalementId',
+            Reclamations.belongsTo(Posts, {
+                foreignKey: 'postId',
                 onDelete: 'CASCADE',
             });
+
             Reclamations.belongsTo(Users, {
                 foreignKey: 'userId',
                 onDelete: 'CASCADE',

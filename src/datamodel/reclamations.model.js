@@ -4,30 +4,34 @@ const { sequelize } = require('./db');
 const reclamationModel = sequelize.define(
     'reclamations',
     {
-        id: { primaryKey: true, autoIncrement: true , type: DataTypes.INTEGER},
+        id: { primaryKey: true, autoIncrement: true, type: DataTypes.INTEGER },
         type: { type: DataTypes.INTEGER, allowNull: true },
+        statut: { type: DataTypes.STRING, allowNull: true },
         commentaire: { type: DataTypes.TEXT, allowNull: true },
-        signalementId: {
+
+        postId: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'signalements_post',
+                model: 'posts',
                 key: 'id',
             },
-            onDelete: 'CASCADE', // facultatif, mais utile pour gérer les suppressions
+            onDelete: 'CASCADE',
             allowNull: false,
         },
+
         userId: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'users',
                 key: 'id',
             },
-            onDelete: 'CASCADE', // facultatif, mais utile pour gérer les suppressions
+            onDelete: 'CASCADE',
             allowNull: false,
         }
-
     },
     { tableName: 'reclamations' },
 );
+
+
 
 module.exports = reclamationModel;
