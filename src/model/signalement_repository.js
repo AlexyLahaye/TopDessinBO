@@ -312,3 +312,63 @@ exports.getReclamationsByPostId = async (postId) => {
     }
 };
 
+
+exports.approuvePost = async (postId) => {
+    try {
+        const post = await Post.findByPk(postId);
+
+        if (!post) {
+            return [false, "Post introuvable."];
+        }
+
+        // Mise à jour de l'état du post
+        post.etat = "CLEAN"; // ou post.status = 'CLEAN' si c'est ce champ que tu utilises
+        await post.save();
+
+        // Suppression des réclamations liées au post
+        await Reclamation.destroy({
+            where: { postId }
+        });
+
+        // Suppression des signalements liés au post
+        await SignalementPost.destroy({
+            where: { postId }
+        });
+
+        return [true, "Post approuvé avec succès."];
+
+    } catch (error) {
+        console.error("Erreur lors de l'approuvation du post :", error);
+        return [false, "Erreur serveur lors de l'approuvation du post."];
+    }
+};
+
+exports.deletePost = async (postId) => {
+    try {
+        const post = await Post.findByPk(postId);
+
+        if (!post) {
+            return [false, "Post introuvable."];
+        }
+
+        // Mise à jour de l'état du post
+        post.etat = "DELETED"; // ou post.status = 'CLEAN' si c'est ce champ que tu utilises
+        await post.save();
+
+        // Suppression des réclamations liées au post
+        await Reclamation.destroy({
+            where: { postId }
+        });
+
+        // Suppression des signalements liés au post
+        await SignalementPost.destroy({
+            where: { postId }
+        });
+
+        return [true, "Post supprimé avec succès."];
+
+    } catch (error) {
+        console.error("Erreur lors du nettoyage du post :", error);
+        return [false, "Erreur serveur lors du nettoyage du post."];
+    }
+};

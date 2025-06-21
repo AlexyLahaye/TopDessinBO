@@ -113,5 +113,27 @@ router.get("/getReclamationPost/:postId", verifyToken, async (req, res) => {
     }
 });
 
+router.post('/approuvePost', body("postId") ,verifyToken, async (req, res) => {
+
+    const [success, message] = await signalementRepository.approuvePost(req.body.postId);
+
+    if (success) {
+        res.status(200).json({ success: message });
+    } else {
+        res.status(400).json({ error: message });
+    }
+});
+
+router.post('/deletePost', body("postId") ,verifyToken, async (req, res) => {
+
+    const [success, message] = await signalementRepository.deletePost(req.body.postId);
+
+    if (success) {
+        res.status(200).json({ success: message });
+    } else {
+        res.status(400).json({ error: message });
+    }
+});
+
 
 exports.initializeRoutesSignalement = () => router;
