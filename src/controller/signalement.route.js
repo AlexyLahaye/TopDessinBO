@@ -135,5 +135,15 @@ router.post('/deletePost', body("postId") ,verifyToken, async (req, res) => {
     }
 });
 
+router.get('/allMineReclamations/:userId', async (req, res) => {
+    const [status, data] = await signalementRepository.GetToutesMesReclamations(req.params.userId);
+
+    if (status) {
+        res.status(200).json({ success: data });
+    } else {
+        res.status(500).json({ error: data });
+    }
+});
+
 
 exports.initializeRoutesSignalement = () => router;

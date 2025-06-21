@@ -246,14 +246,6 @@ exports.createReclamation = async (userId, postId, commentaire, type) => {
             return [false, "Vous n'êtes pas autorisé à faire une réclamation sur ce post."];
         }
 
-        // Vérifie s'il existe déjà une réclamation liée à ce post (uniquement pour type 0)
-        if (type === 0) {
-            const existingReclamation = await Reclamation.findOne({ where: { postId } });
-            if (existingReclamation) {
-                return [false, "Une réclamation existe déjà pour ce post."];
-            }
-        }
-
         // Crée la réclamation
         const newReclamation = await Reclamation.create({
             userId,
@@ -370,5 +362,51 @@ exports.deletePost = async (postId) => {
     } catch (error) {
         console.error("Erreur lors du nettoyage du post :", error);
         return [false, "Erreur serveur lors du nettoyage du post."];
+    }
+};
+
+exports.GetToutesMesReclamations = async (userId) => {
+    try {
+        // Étape 1 : récupérer toutes les réclamations de l'utilisateur avec type 0
+        const allReclamations = await Reclamation.findAll({
+            where: {
+                userId,
+                type: 0 // uniquement les réclamations dont l'utilisateur est auteur avec type 0
+            },
+            include: [
+                { model: users, attributes: ['id', 'pseudo'] },
+                { model: Post, attributes: ['id'] }
+            ],
+            order: [['createdAt', 'DESC']] // la plus récente en premier
+        });
+
+        // Étape 2 : filtrer pour ne garder qu'une seule réclamation par postId
+        const seenPosts = new Set();
+        const uniqueReclamations = [];
+
+        for (const rec of allReclamations) {
+            if (!seenPosts.has(rec.postId)) {
+                seenPosts.add(rec.postId);
+                uniqueReclamations.push(rec);
+            }
+        }
+
+        // Étape 3 : compter le nombre de réclamations par postId
+        const countByPostId = {};
+        allReclamations.forEach(rec => {
+            countByPostId[rec.postId] = (countByPostId[rec.postId] || 0) + 1;
+        });
+
+        // Étape 4 : ajouter le champ "etat"
+        const reclamationsAvecEtat = uniqueReclamations.map(r => ({
+            ...r.toJSON(),
+            etat: countByPostId[r.postId] > 1 ? "retour" : "Réclamation"
+        }));
+
+        return [true, reclamationsAvecEtat];
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des réclamations :', error);
+        return [false, "Erreur lors de la récupération des réclamations"];
     }
 };
