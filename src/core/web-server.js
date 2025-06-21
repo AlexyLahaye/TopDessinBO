@@ -19,6 +19,7 @@ const routesUsers = require('../controller/users.route');
 const routeAuth = require('../controller/auth.route');
 const routePosts = require('../controller/posts.route');
 const routeFollows = require('../controller/follows.route');
+const routeSignalement = require('../controller/signalement.route');
 
 
 class WebServer {
@@ -83,19 +84,21 @@ class WebServer {
 
 
         //Réclamation
-            Signalement_post.hasMany(Reclamations, {
-                foreignKey: 'signalementId',
+            Posts.hasMany(Reclamations, {
+                foreignKey: 'postId',
                 onDelete: 'CASCADE',
             });
+
             Users.hasMany(Reclamations, {
                 foreignKey: 'userId',
                 onDelete: 'CASCADE',
             });
 
-            Reclamations.belongsTo(Signalement_post, {
-                foreignKey: 'signalementId',
+            Reclamations.belongsTo(Posts, {
+                foreignKey: 'postId',
                 onDelete: 'CASCADE',
             });
+
             Reclamations.belongsTo(Users, {
                 foreignKey: 'userId',
                 onDelete: 'CASCADE',
@@ -211,6 +214,8 @@ class WebServer {
         this.app.use('/users', routesUsers.initializeRoutesUsers());
         this.app.use('/auth', routeAuth.initializeRouteAuth());
         this.app.use('/follow', routeFollows.initializeRouteFollows());
+        this.app.use('/repport', routeSignalement.initializeRoutesSignalement());
+        this.app.use('/upload', uploadRoute.initializeRoutesPosts()); // Route d'upload test
         this.app.use('/posts', routePosts.initializeRoutesPosts());
     }
 }
