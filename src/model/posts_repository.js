@@ -56,3 +56,37 @@ exports.deletePostAndImages = async (postId) => {
         throw error;
     }
 };
+
+// ✅ Récupérer tous les posts d'un utilisateur par son ID
+exports.getPostsByUserId = async (userId) => {
+    try {
+        const posts = await Posts.findAll({ where: { userId } });
+        return posts;
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération des posts utilisateur :', error);
+        throw error;
+    }
+};
+
+// ✅ Récupérer tous les posts (GET ALL)
+exports.getAllPosts = async () => {
+    try {
+        const posts = await Posts.findAll();
+        return posts;
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération de tous les posts :', error);
+        throw error;
+    }
+};
+
+// ✅ Récupérer un post par son ID (GET ONE)
+exports.getPostById = async (postId) => {
+    try {
+        const post = await Posts.findByPk(postId);
+        if (!post) return null;
+        return post;
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération du post :', error);
+        throw error;
+    }
+};
