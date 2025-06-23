@@ -1,12 +1,7 @@
-const UsersRepository = require('../datamodel/users.model');
-const {sequelize} = require("../datamodel/db")
-const {generateHashedPassword} = require("../security/crypto")
-const md5 = require('md5');
 
+const {sequelize} = require("../datamodel/db")
 
 const Follows = require('../datamodel/follows.model');
-const Users = require("../datamodel/users.model");
-
 
 exports.followFriends = async ( userId, idAmi) => {
     async function addFriend(userId, idAmi) {
