@@ -74,4 +74,38 @@ router.post('/upload', upload.single('image'), (req, res) => {
     });
 });
 
+// ✅ GET /posts/user/:userId → tous les posts d'un utilisateur
+router.get('/user/:userId', async (req, res) => {
+    try {
+        const posts = await getPostsByUserId(req.params.userId);
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+
+// ✅ GET /posts → tous les posts
+router.get('/', async (req, res) => {
+    try {
+        const posts = await getAllPosts();
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+
+// ✅ GET /posts/:id → un post par ID
+router.get('/:id', async (req, res) => {
+    try {
+        const post = await getPostById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post non trouvé.' });
+        }
+        res.status(200).json(post);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+
+
 exports.initializeRoutesPosts = () => router;
