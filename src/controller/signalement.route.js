@@ -10,12 +10,10 @@ const router = express.Router();
 router.post("/signalCom",
     body("userId"),
     body("comId"),
-    body("raisonId"),
-    body("description"),
     verifyToken, async(req,res) => {
 
 
-        const [status, response] =  await signalementRepository.reportCom( req.body.userId, req.body.comId, req.body.raisonId, req.body.description)
+        const [status, response] =  await signalementRepository.reportCom( req.body.userId, req.body.comId, "1", "Signalé")
 
         if(status === true){
             res.status(200).json({ success: response });
@@ -25,6 +23,7 @@ router.post("/signalCom",
         }
 
 });
+
 
 router.post("/signalPost",
     body("userId"),
