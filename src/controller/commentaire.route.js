@@ -11,13 +11,13 @@ router.post('/creaCom', body('userID'), body('postId'), body('contenu'), verifyT
     try {
 
         if (!req.body.userId || !req.body.postId || !req.body.contenu) {
-            return res.status(400).json({ error: 'Champs manquants.' });
+             res.status(400).json({ error: 'Champs manquants.' });
         }
 
         const [success, result] = await commentaireRepository.CreateCommentaire(req.body.userId, req.body.postId, req.body.contenu);
 
         if (success) {
-            res.status(201).json(result);
+            res.status(200).json({success : "Commentaire envoyé"});
         } else {
             res.status(400).json({ error: result });
         }
@@ -32,9 +32,21 @@ router.post('/suppCom',body('userId'), body('comId'), verifyToken, async (req, r
     const [success, message] = await commentaireRepository.SupprimerCommentaire(req.body.comId, req.body.userId);
 
     if (success) {
-        return res.status(200).json({ message });
+         res.status(200).json({ success : message });
     } else {
-        return res.status(400).json({ error: message });
+         res.status(400).json({ error: message });
+    }
+});
+
+router.get('/getCom/:postId', async (req, res) => {
+    const postId = parseInt(req.params.postId, 10);
+
+    const [success, data] = await commentaireRepository.getCommentaires(postId);
+
+    if (success) {
+        res.status(200).json({success : data});
+    } else {
+      res.status(500).json({ error: data });
     }
 });
 
