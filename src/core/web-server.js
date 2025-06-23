@@ -215,7 +215,6 @@ class WebServer {
         this.app.use('/auth', routeAuth.initializeRouteAuth());
         this.app.use('/follow', routeFollows.initializeRouteFollows());
         this.app.use('/repport', routeSignalement.initializeRoutesSignalement());
-        this.app.use('/upload', uploadRoute.initializeRoutesPosts()); // Route d'upload test
         this.app.use('/posts', routePosts.initializeRoutesPosts());
     }
 }
