@@ -87,7 +87,7 @@ router.get('/user/:userId', async (req, res) => {
     }
 });
 
-router.get('/user/:userId/reported', verifyToken, async (req, res) => {
+router.get('/:userId/reported', verifyToken, async (req, res) => {
     try {
         const posts = await getPostsReportedByUserId(req.params.userId);
         res.status(200).json(posts);
