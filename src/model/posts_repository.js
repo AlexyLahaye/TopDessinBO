@@ -61,7 +61,7 @@ exports.deletePostAndImages = async (postId) => {
 // Récupérer tous les posts d'un utilisateur par son ID
 exports.getPostsByUserId = async (userId) => {
     try {
-        const posts = await Posts.findAll({ where: { userId } });
+        const posts = await Posts.findAll({ where: { userId }, order: [['createdAt', 'DESC']] });
         return posts;
     } catch (error) {
         console.error(' Erreur lors de la récupération des posts utilisateur :', error);
@@ -76,7 +76,8 @@ exports.getPostsReportedByUserId = async (userId) => {
             where: {
                 userId: userId,
                 etat: 'reported'
-            }
+            },
+            order: [['updatedAt', 'DESC']]
         });
         return posts;
     } catch (error) {
