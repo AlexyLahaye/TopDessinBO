@@ -9,6 +9,7 @@ const Follows = require('../datamodel/follows.model');
 const Themes = require('../datamodel/themes.model');
 const Posts = require('../datamodel/posts.model');
 const Commentaires = require('../datamodel/commentaires.model');
+const Likes = require('../datamodel/likes.model');
 const Raisons = require('../datamodel/raisons.model');
 const Signalement_post = require('../datamodel/signalements_post');
 const Signalement_com = require('../datamodel/signalements_com');
@@ -21,6 +22,7 @@ const routePosts = require('../controller/posts.route');
 const routeFollows = require('../controller/follows.route');
 const routeSignalement = require('../controller/signalement.route');
 const routeCommentaire = require('../controller/commentaire.route');
+const routeLike = require('../controller/like.route');
 
 
 class WebServer {
@@ -53,8 +55,10 @@ class WebServer {
 
             Posts.belongsTo(Users, {
                 foreignKey: 'userId',
+                as: 'user',
                 onDelete: 'CASCADE',
             });
+
 
         // Signalement_Post
             Posts.hasMany(Signalement_post, {
@@ -153,6 +157,16 @@ class WebServer {
                 onDelete: 'CASCADE',
             });
 
+        // Likes
+            Likes.belongsTo(Users, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+            Likes.belongsTo(Posts, {
+                foreignKey: 'postId',
+                onDelete: 'CASCADE',
+            });
+
 
         // Follows
             Users.belongsToMany(Users, {
@@ -218,6 +232,7 @@ class WebServer {
         this.app.use('/repport', routeSignalement.initializeRoutesSignalement());
         this.app.use('/posts', routePosts.initializeRoutesPosts());
         this.app.use('/commentaire', routeCommentaire.initializeRoutesCommentaire());
+        this.app.use('/like', routeLike.initializeRoutesLike());
     }
 }
 
