@@ -90,10 +90,10 @@ router.get('/user/:userId', async (req, res) => {
 router.get('/:userId/reported', verifyToken, async (req, res) => {
     try {
         const posts = await getPostsReportedByUserId(req.params.userId);
-        res.status(200).json(posts);
+        res.status(200).json({success : posts});
     } catch (error) {
         console.error("Erreur dans GET /user/:userId/reported :", error);
-        res.status(500).json({ message: 'Erreur serveur' });
+        res.status(500).json({ error: 'Erreur serveur' });
     }
 });
 

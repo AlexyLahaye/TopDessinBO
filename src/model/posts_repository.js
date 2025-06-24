@@ -75,7 +75,7 @@ exports.getPostsReportedByUserId = async (userId) => {
         const posts = await Posts.findAll({
             where: {
                 userId: userId,
-                etat: 'reported'
+                etat: 'REPORTED'
             },
             order: [['updatedAt', 'DESC']]
         });
