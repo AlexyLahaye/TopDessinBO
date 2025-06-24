@@ -70,7 +70,7 @@ exports.getPostsByUserId = async (userId) => {
 };
 
 // Récupérer tous les posts qui ont été signalé d'un utilisateur par son ID
-exports.getPostsByUserId = async (userId) => {
+exports.getPostsReportedByUserId = async (userId) => {
     try {
         const posts = await Posts.findAll({
             where: {
