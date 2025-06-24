@@ -4,7 +4,7 @@ const upload = require('../core/upload'); // si upload.js est dans /core
 const path = require('path');
 const fs = require('fs');
 
-const {createPostWithImages, deletePostAndImages} = require("../model/posts_repository");
+const {createPostWithImages, deletePostAndImages, getPostsByUserId, getAllPosts, getPostById, getUserByPost} = require("../model/posts_repository");
 
 // ✅ Route complète : création d'un post avec 1 à 4 images
 router.post('/crea', upload.array('images', 4), async (req, res) => {
@@ -83,6 +83,17 @@ router.get('/user/:userId', async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur' });
     }
 });
+
+// ✅ GET /posts/user-from-post/:postId → récupérer l'utilisateur d'un post
+router.get('/user-from-post/:postId', async (req, res) => {
+    try {
+        const user = await getUserByPost(req.params.postId);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+
 
 // ✅ GET /posts → tous les posts
 router.get('/', async (req, res) => {
