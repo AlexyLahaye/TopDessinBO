@@ -69,7 +69,23 @@ exports.getPostsByUserId = async (userId) => {
     }
 };
 
-// Récupérer l'utilisateur à partir de l'ID d'un post
+// Récupérer tous les posts qui ont été signalé d'un utilisateur par son ID
+exports.getPostsByUserId = async (userId) => {
+    try {
+        const posts = await Posts.findAll({
+            where: {
+                userId: userId,
+                etat: 'reported'
+            }
+        });
+        return posts;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des posts utilisateur :', error);
+        throw error;
+    }
+};
+
+
 // Récupérer l'utilisateur à partir de l'ID d'un post
 exports.getUserByPost = async (postId) => {
     try {
