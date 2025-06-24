@@ -4,7 +4,9 @@ const upload = require('../core/upload'); // si upload.js est dans /core
 const path = require('path');
 const fs = require('fs');
 
-const {createPostWithImages, deletePostAndImages, getPostsByUserId, getAllPosts, getPostById, getUserByPost} = require("../model/posts_repository");
+const {createPostWithImages, deletePostAndImages, getPostsByUserId, getAllPosts, getPostById, getUserByPost,
+    getPostsReportedByUserId
+} = require("../model/posts_repository");
 const {verifyToken} = require("../security/auth");
 
 // ✅ Route complète : création d'un post avec 1 à 4 images
@@ -87,7 +89,7 @@ router.get('/user/:userId', async (req, res) => {
 
 router.get('/user/:userId/reported', verifyToken, async (req, res) => {
     try {
-        const posts = await getPostsByUserId(req.params.userId);
+        const posts = await getPostsReportedByUserId(req.params.userId);
         res.status(200).json(posts);
     } catch (error) {
         console.error("Erreur dans GET /user/:userId/reported :", error);
