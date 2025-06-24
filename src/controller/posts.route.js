@@ -4,7 +4,7 @@ const upload = require('../core/upload'); // si upload.js est dans /core
 const path = require('path');
 const fs = require('fs');
 
-const {createPostWithImages, deletePostAndImages} = require("../model/posts_repository");
+const {createPostWithImages, deletePostAndImages, getPostsByUserId, getAllPosts, getPostById} = require("../model/posts_repository");
 
 // ✅ Route complète : création d'un post avec 1 à 4 images
 router.post('/crea', upload.array('images', 4), async (req, res) => {
