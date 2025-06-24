@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 const {createPostWithImages, deletePostAndImages, getPostsByUserId, getAllPosts, getPostById, getUserByPost,
-    getPostsReportedByUserId
+    getPostsReportedByUserId, getMyPostById
 } = require("../model/posts_repository");
 const {verifyToken} = require("../security/auth");
 
@@ -128,6 +128,19 @@ router.get('/:id', async (req, res) => {
         res.status(200).json(post);
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+
+
+router.get("/getOnePost/:postId", verifyToken, async (req, res) => {
+    console.log(req.params.postId);
+
+    const [status, response] = await getMyPostById(req.params.postId);
+
+    if (status === true) {
+        res.status(200).json({ success: response });
+    } else {
+        res.status(400).json({ error: response });
     }
 });
 

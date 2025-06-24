@@ -137,3 +137,19 @@ exports.getPostById = async (postId) => {
         throw error;
     }
 };
+
+
+exports.getMyPostById = async (id) => {
+    try {
+        const post = await Posts.findOne({
+            where: { id },
+        });
+
+        if (!post) return [false, "Aucun post trouvé avec cet ID"];
+
+        return [true, post];
+    } catch (err) {
+        console.error("Erreur dans getPostById :", err);
+        return [false, "Erreur serveur lors de la récupération du post"];
+    }
+};

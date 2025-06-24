@@ -124,6 +124,7 @@ exports.GetSignalementPost = async (postId) => {
         const post = await Post.findByPk(postId, {
             include: [{
                 model: users,
+                as: 'user',
                 attributes: ['id', 'pseudo']
             }]
         });
