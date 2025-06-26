@@ -1,5 +1,6 @@
 const Commentaire = require('../datamodel/commentaires.model');
 const User = require('../datamodel/users.model');
+const Posts = require('../datamodel/posts.model');
 
 exports.CreateCommentaire = async (userId, postId, contenu) => {
     try {
@@ -13,6 +14,9 @@ exports.CreateCommentaire = async (userId, postId, contenu) => {
             userId,
             postId
         });
+
+        // Incrémenter nb_like
+        await Posts.increment('nb_com', { where: { id: postId } });
 
         return [true, nouveauCommentaire];
     } catch (error) {
@@ -34,7 +38,12 @@ exports.SupprimerCommentaire = async (commentaireId, userId) => {
             return [false, "Vous n'êtes pas l'auteur de ce commentaire"];
         }
 
+        const postId = commentaire.postId; // ✅ récupération du postId
+
         await commentaire.destroy();
+
+        // Décrémenter nb_com du post concerné
+        await Posts.decrement('nb_com', { where: { id: postId } });
 
         return [true, "Commentaire supprimé avec succès"];
     } catch (error) {
@@ -42,6 +51,7 @@ exports.SupprimerCommentaire = async (commentaireId, userId) => {
         return [false, "Erreur serveur lors de la suppression"];
     }
 };
+
 
 exports.getCommentaires = async (postId) => {
     try {
