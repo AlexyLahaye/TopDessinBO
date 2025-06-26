@@ -6,6 +6,7 @@ const users = require('../datamodel/users.model');
 const Raison = require('../datamodel/raisons.model');
 const Reclamation = require('../datamodel/reclamations.model');
 
+
 const { Op, Sequelize } = require('sequelize');
 
 exports.reportCom = async (userId, comId, raisonId, description) => {
@@ -102,7 +103,7 @@ exports.reportPost = async (userId, postId, raisonId, description) => {
             where: { postId }
         });
 
-        if (nbSignalements > 1) {
+        if (nbSignalements > 0) {
             await Post.update(
                 { etat: "REPORTED" },
                 { where: { id: postId } }
@@ -123,6 +124,7 @@ exports.GetSignalementPost = async (postId) => {
         const post = await Post.findByPk(postId, {
             include: [{
                 model: users,
+                as: 'user',
                 attributes: ['id', 'pseudo']
             }]
         });
@@ -410,3 +412,5 @@ exports.GetToutesMesReclamations = async (userId) => {
         return [false, "Erreur lors de la récupération des réclamations"];
     }
 };
+
+

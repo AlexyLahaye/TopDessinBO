@@ -2,6 +2,7 @@ const {body} = require("express-validator");
 const {verifyToken} = require("../security/auth");
 
 const signalementRepository = require("../model/signalement_repository");
+const Raisons = require('../datamodel/raisons.model');
 
 const express = require('express');
 const router = express.Router();
@@ -134,13 +135,24 @@ router.post('/deletePost', body("postId") ,verifyToken, async (req, res) => {
     }
 });
 
-router.get('/allMineReclamations/:userId', async (req, res) => {
+router.get('/allMineReclamations/:userId', verifyToken,async (req, res) => {
     const [status, data] = await signalementRepository.GetToutesMesReclamations(req.params.userId);
 
     if (status) {
         res.status(200).json({ success: data });
     } else {
         res.status(500).json({ error: data });
+    }
+});
+
+
+router.get('/raisonAll',verifyToken, async (req, res) => {
+    try {
+        const raisons = await Raisons.findAll();
+        res.status(200).json({success : raisons } );
+    } catch (error) {
+
+        res.status(500).json({error :  "Erreur serveur lors de la récupération des raisons"});
     }
 });
 
