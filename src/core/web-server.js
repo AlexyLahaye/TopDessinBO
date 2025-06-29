@@ -14,6 +14,9 @@ const Raisons = require('../datamodel/raisons.model');
 const Signalement_post = require('../datamodel/signalements_post');
 const Signalement_com = require('../datamodel/signalements_com');
 const Reclamations = require('../datamodel/reclamations.model');
+const Tournois = require('../datamodel/tournois.model');
+const Participations = require('../datamodel/participations.model');
+
 
 
 const routesUsers = require('../controller/users.route');
@@ -23,6 +26,8 @@ const routeFollows = require('../controller/follows.route');
 const routeSignalement = require('../controller/signalement.route');
 const routeCommentaire = require('../controller/commentaire.route');
 const routeLike = require('../controller/like.route');
+const routeTournois = require('../controller/tournois.route');
+
 
 
 class WebServer {
@@ -33,6 +38,12 @@ class WebServer {
 
     constructor() {
         this.app = express();
+
+        const cors = require('cors');
+        this.app.use(cors({
+            origin: '*',
+            exposedHeaders: ['ngrok-skip-browser-warning']
+        }));
 
         //Reseaux
             // Dans le modèle Reseaux
@@ -199,6 +210,28 @@ class WebServer {
                 otherKey: 'postId',
             });
 
+            // ====== RELATIONS TOURNOIS & PARTICIPATIONS ======
+            Tournois.hasMany(Participations, {
+                foreignKey: 'tournoisId',
+                onDelete: 'CASCADE',
+            });
+
+            Participations.belongsTo(Tournois, {
+                foreignKey: 'tournoisId',
+                onDelete: 'CASCADE',
+            });
+
+            Users.hasMany(Participations, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+
+            Participations.belongsTo(Users, {
+                foreignKey: 'userId',
+                onDelete: 'CASCADE',
+            });
+
+
 
         // ⚠️ Supprime toutes les tables existantes puis les recrée
          sequelize.sync({ alter: true }); // pour mise à jour
@@ -221,8 +254,17 @@ class WebServer {
     }
 
     _configureStaticAssets() {
-        // ✅ Sert les images statiques du dossier uploads
-        this.app.use('/uploads', express.static(path.join(__dirname, '../..', 'uploads')));
+        // ✅ Sert les images statiques du dossier uploads / marche pas avec ngrok car il est bloquer si tu as la version gratuite ...
+        //this.app.use('/uploads', express.static(path.join(__dirname, '../..', 'uploads')));
+
+        this.app.get('/uploads/:filename', (req, res) => {
+            const filePath = path.join(__dirname, '../..', 'uploads', req.params.filename);
+            res.set('ngrok-skip-browser-warning', 'true');
+            res.set('Access-Control-Allow-Origin', '*'); // ← autorise les images en cross-origin
+            res.sendFile(filePath);
+        });
+
+
     }
 
     _initializeRoutes() {
@@ -233,6 +275,7 @@ class WebServer {
         this.app.use('/posts', routePosts.initializeRoutesPosts());
         this.app.use('/commentaire', routeCommentaire.initializeRoutesCommentaire());
         this.app.use('/like', routeLike.initializeRoutesLike());
+        this.app.use('/tournois', routeTournois.initializeRoutesTournois());
     }
 }
 
