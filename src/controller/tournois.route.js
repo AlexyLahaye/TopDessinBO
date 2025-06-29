@@ -17,6 +17,8 @@ const {
     getParticipationByUserAndTournoi
 } = require("../model/tournois_participations_repository");
 
+const tournoisRepository = require("../model/tournois_repository");
+
 // ===== ROUTES TOURNOIS =====
 
 // POST /tournois → Créer un tournoi
@@ -148,6 +150,22 @@ router.get('/participations/check/:userId/:tournoiId', async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur' });
     }
 });
+
+
+
+//get Infotournois
+router.get('/getTournoi/:id', async (req, res) => {
+    const tournoiId = parseInt(req.params.id, 10);
+
+    const [success, data] = await tournoisRepository.getTournoiDetail(tournoiId);
+
+    if (success) {
+        res.status(200).json({ success: data });
+    } else {
+        res.status(500).json({ error: data });
+    }
+});
+
 
 exports.initializeRoutesTournois = () => router;
 

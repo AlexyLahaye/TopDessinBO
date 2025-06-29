@@ -16,6 +16,7 @@ const Signalement_com = require('../datamodel/signalements_com');
 const Reclamations = require('../datamodel/reclamations.model');
 const Tournois = require('../datamodel/tournois.model');
 const Participations = require('../datamodel/participations.model');
+const Hastags = require('../datamodel/hashtag.model');
 
 
 
@@ -229,6 +230,24 @@ class WebServer {
             Participations.belongsTo(Users, {
                 foreignKey: 'userId',
                 onDelete: 'CASCADE',
+            });
+
+            //tournois utilisateur
+
+            Tournois.belongsTo(Users, {
+                foreignKey: 'userId', as: 'user'
+            });
+            Users.hasMany(Tournois, {
+                foreignKey: 'userId'
+            });
+
+            //htag
+
+            Tournois.belongsToMany(Hastags, {
+                through: 'tournois_hashtags'
+            });
+            Hastags.belongsToMany(Tournois, {
+                through: 'tournois_hashtags'
             });
 
 
