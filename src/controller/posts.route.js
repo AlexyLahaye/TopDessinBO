@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 const {createPostWithImages, deletePostAndImages, getPostsByUserId, getAllPosts, getPostById, getUserByPost,
-    getPostsReportedByUserId, getMyPostById
+    getPostsReportedByUserId, getMyPostById, getPostsFromFollows
 } = require("../model/posts_repository");
 const {verifyToken} = require("../security/auth");
 
@@ -75,6 +75,21 @@ router.post('/upload', upload.single('image'), (req, res) => {
         file: req.file,
         imageUrl
     });
+});
+
+// GET /posts/followed/:userId
+router.get("/followed/:userId", async (req, res) => {
+    try {
+        const userId = parseInt(req.params.userId);
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: "ID utilisateur invalide." });
+        }
+
+        const posts = await getPostsFromFollows(userId);
+        return res.status(200).json(posts);
+    } catch (error) {
+        return res.status(500).json({ error: "Erreur serveur lors de la récupération des posts suivis." });
+    }
 });
 
 //  GET /posts/user/:userId → tous les posts d'un utilisateur

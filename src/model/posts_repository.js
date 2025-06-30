@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const Posts = require('../datamodel/posts.model');
 const Users = require('../datamodel/users.model');
+const Follows = require('../datamodel/follows.model');
 
 exports.createPostWithImages = async (data) => {
     const { description, type, categorie, etat, userId, images, hashtags } = data;
@@ -57,6 +58,37 @@ exports.deletePostAndImages = async (postId) => {
         throw error;
     }
 };
+
+exports.getPostsFromFollows = async (userId) => {
+    try {
+        // Récupère tous les idAmis que l'utilisateur suit
+        const follows = await Follows.findAll({
+            where: { userId },
+            attributes: ['idAmis']
+        });
+
+        // Extraire les IDs suivis + ajouter le sien
+        const followedUserIds = follows.map(f => f.idAmis);
+        followedUserIds.push(userId); // Inclure aussi les propres posts
+
+        // Supprimer les doublons au cas où
+        const uniqueUserIds = [...new Set(followedUserIds)];
+
+        // Récupère les posts de ces utilisateurs
+        const posts = await Posts.findAll({
+            where: {
+                userId: uniqueUserIds
+            },
+            order: [['createdAt', 'DESC']]
+        });
+
+        return posts;
+    } catch (error) {
+        console.error("Erreur dans getPostsFromFollows :", error);
+        throw error;
+    }
+};
+
 
 // Récupérer tous les posts d'un utilisateur par son ID
 exports.getPostsByUserId = async (userId) => {

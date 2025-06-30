@@ -7,15 +7,35 @@ const { Op } = require('sequelize');
    TOURNOIS CRUD
 ============================= */
 
-exports.createTournoi = async (data) => {
+exports.createTournoiWithImages = async (data) => {
+    const {
+        titre, theme, dateFin, recompense, couleur,
+        banner, paralaxe, prixEntre, style, attente, userId
+    } = data;
+
     try {
-        const tournoi = await Tournois.create(data);
+        const tournoi = await Tournois.create({
+            titre,
+            theme,
+            dateFin,
+            recompense,
+            couleur,
+            banner,
+            paralaxe,
+            prixEntre,
+            style,
+            attente,
+            userId
+        });
+
+        console.log('Nouveau tournoi créé :', tournoi.id);
         return tournoi;
     } catch (error) {
-        console.error('Erreur création tournoi :', error);
+        console.error('Erreur lors de la création du tournoi :', error);
         throw error;
     }
 };
+
 
 exports.getAllTournois = async () => {
     try {

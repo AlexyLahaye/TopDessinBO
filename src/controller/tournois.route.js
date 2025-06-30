@@ -3,7 +3,7 @@ const router = express.Router();
 const upload = require('../core/upload');
 
 const {
-    createTournoi,
+    createTournoiWithImages,
     deleteTournoi,
     getAllTournois,
     getTournoiById,
@@ -21,13 +21,28 @@ const tournoisRepository = require("../model/tournois_repository");
 
 // ===== ROUTES TOURNOIS =====
 
-// POST /tournois → Créer un tournoi
-router.post('/', async (req, res) => {
+// Création d’un tournoi avec 2 images max : banner et paralaxe
+// ✅ Route correcte avec gestion d’images (banner + paralaxe)
+router.post('/', upload.fields([
+    { name: 'banner', maxCount: 1 },
+    { name: 'paralaxe', maxCount: 1 }
+]), async (req, res) => {
     try {
-        const tournoi = await createTournoi(req.body);
-        res.status(201).json(tournoi);
-    } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la création du tournoi' });
+        const data = req.body;
+
+        const bannerFile = req.files?.banner?.[0];
+        const paralaxeFile = req.files?.paralaxe?.[0];
+
+        const tournoi = await createTournoiWithImages({
+            ...data,
+            banner: bannerFile ? bannerFile.filename : null,
+            paralaxe: paralaxeFile ? paralaxeFile.filename : null
+        });
+
+        res.status(201).json({ message: "Tournoi créé avec succès", tournoi });
+    } catch (err) {
+        console.error("Erreur création tournoi :", err);
+        res.status(500).json({ error: "Erreur serveur" });
     }
 });
 

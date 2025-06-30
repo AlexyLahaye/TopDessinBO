@@ -26,6 +26,11 @@ const participationModel = sequelize.define(
             onDelete: 'CASCADE',
         },
 
+        role: {
+            type: DataTypes.STRING,
+            allowNull: false, // role u participant, Juge, joueur, admin ?
+        },
+
         image: {
             type: DataTypes.STRING,
             allowNull: false, // image postée par l'utilisateur pour ce tournoi

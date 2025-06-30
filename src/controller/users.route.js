@@ -8,6 +8,7 @@ const { body, validationResult } = require('express-validator');
 const usersRepository = require('../model/users_repository');
 const reseauxRepository = require('../model/reseaux_repository');
 const Auth = require("../security/auth");
+const {getUserByNomLike} = require("../model/users_repository");
 
 router.post("/crea", body("email"), body("mdp"), body("pseudo"), async(req,res) => {
 
@@ -50,6 +51,16 @@ router.patch('/:id', verifyToken, async (req, res) => {
 
     } catch (err) {
         res.status(500).json({ error: "Erreur serveur : " + err.message });
+    }
+});
+
+router.get('/searchUsers/:pseudo', async (req, res) => {
+    try {
+        const result = await getUserByNomLike(req.params.pseudo);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error("Erreur recherche utilisateur :", err);
+        res.status(500).json({ message: "Erreur serveur" });
     }
 });
 

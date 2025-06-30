@@ -1,6 +1,7 @@
 const {sequelize} = require("../datamodel/db")
 const {generateHashedPassword} = require("../security/crypto")
 const md5 = require('md5');
+const { Op } = require("sequelize");
 
 const Users = require('../datamodel/users.model');
 const Uti = require('../model/utilitaire');
@@ -9,9 +10,17 @@ exports.getUsers = async () => {
     return await Users.findAll();
 }
 
-exports.getUserByNom = async (pseudo) => { // TODO findOne a revoir plutot en findAll where like ...
-    return await Users.findOne({where : {pseudo}});
-}
+exports.getUserByNomLike = async (pseudo) => {
+    return await Users.findAll({
+        where: {
+            pseudo: {
+                [Op.iLike]: `%${pseudo}%` // insensible à la casse (PostgreSQL)
+            }
+        },
+        attributes: ['id', 'pseudo', 'icone'], // On ne renvoie que le nécessaire
+        limit: 10 // pour éviter de renvoyer trop de résultats
+    });
+};
 
 exports.getUserById = async (id) => {
     return await Users.findByPk(id);
